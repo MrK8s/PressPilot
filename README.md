@@ -19,5 +19,5 @@ A step by step series of examples that tell you how to get a development environ
 
 2. Navigate to the repository's directory: `cd presspilot`
 
-3. Run the build script: `./build.sh`
+3. Run the makefile: `make install`
 
