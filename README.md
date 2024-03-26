@@ -8,7 +8,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-Make sure you have GO and terraform installed.
+Make sure you have GO installed.
 
 
 ### Installing
@@ -20,3 +20,4 @@ A step by step series of examples that tell you how to get a development environ
 2. Navigate to the repository's directory: `cd presspilot`
 
 3. Run the build script: `./build.sh`
+
