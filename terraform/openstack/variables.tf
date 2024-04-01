@@ -13,3 +13,7 @@ variable "flavor_name" {
 variable "public_network" {
     description = "Name of the public network"
 }
+
+variable "keypair_name" {
+    description = "Name of the keypair to use for the instance"
+}

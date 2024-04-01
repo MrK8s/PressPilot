@@ -1,24 +1,40 @@
 package main
 
 import (
-	"flag"
+    "bufio"
     "fmt"
     "os"
     "os/exec"
     "strings"
     "time"
     "net/http"
-	"path/filepath"
-	"bytes"
+    "path/filepath"
+    "bytes"
 )
 
 func main() {
-    installCommand := flag.NewFlagSet("install", flag.ExitOnError)
+    reader := bufio.NewReader(os.Stdin)
 
-    externalNetworkID := installCommand.String("external_network_id", "", "External Network ID")
-    imageName := installCommand.String("image_name", "", "Image Name")
-    flavorName := installCommand.String("flavor_name", "", "Flavor Name")
-    publicNetwork := installCommand.String("public_network", "", "Public Network Name")
+    fmt.Print("Enter External Network ID: ")
+    externalNetworkID, _ := reader.ReadString('\n')
+
+    fmt.Print("Enter Image Name: ")
+    imageName, _ := reader.ReadString('\n')
+
+    fmt.Print("Enter Flavor Name: ")
+    flavorName, _ := reader.ReadString('\n')
+
+    fmt.Print("Enter Public Network Name: ")
+    publicNetwork, _ := reader.ReadString('\n')
+
+    fmt.Print("Key Pair: ")
+    keyPair_name, _ := reader.ReadString('\n')
+    // Trim input
+    externalNetworkID = strings.TrimSpace(externalNetworkID)
+    imageName = strings.TrimSpace(imageName)
+    flavorName = strings.TrimSpace(flavorName)
+    publicNetwork = strings.TrimSpace(publicNetwork)
+    keyPair_name = strings.TrimSpace(keyPair_name)
 
     if len(os.Args) < 2 {
         fmt.Println("expected 'install' subcommands")
@@ -27,16 +43,15 @@ func main() {
 
     switch os.Args[1] {
     case "install":
-        installCommand.Parse(os.Args[2:])
-
         // Running Terraform init and apply
         runTerraformCommand("terraform/openstack", "init")
         terraformApplyCmd := []string{
             "-auto-approve",
-            fmt.Sprintf("-var=external_network_id=%s", *externalNetworkID),
-            fmt.Sprintf("-var=image_name=%s", *imageName),
-            fmt.Sprintf("-var=flavor_name=%s", *flavorName),
-            fmt.Sprintf("-var=public_network=%s", *publicNetwork),
+            fmt.Sprintf("-var=external_network_id=%s", externalNetworkID),
+            fmt.Sprintf("-var=image_name=%s", imageName),
+            fmt.Sprintf("-var=flavor_name=%s", flavorName),
+            fmt.Sprintf("-var=public_network=%s", publicNetwork),
+            fmt.Sprintf("-var=keyPair_name=%s", keyPair_name),
         }
         runTerraformCommand("terraform/openstack", "apply", terraformApplyCmd...)
 
@@ -75,6 +90,7 @@ func runTerraformCommand(dir, command string, args ...string) {
 
     if err := cmd.Run(); err != nil {
         fmt.Println("Error running Terraform command:", err)
+        fmt.Println("Command output:", out.String()) // Print the command output
         os.Exit(1)
     }
 
